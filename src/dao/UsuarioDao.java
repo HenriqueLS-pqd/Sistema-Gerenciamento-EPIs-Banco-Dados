@@ -5,9 +5,17 @@ import modelo.Usuario;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe responsável pelas operações de persistência dos dados da tabela 'usuario'.
+ */
 public class UsuarioDao {
 
-    public void inserirUsuario(Usuario usuario) {
+    /**
+     * Cadastra um novo usuário no banco de dados.
+     *
+     * @param usuario Objeto Usuario a ser cadastrado.
+     */
+    public void cadastrarUsuario(Usuario usuario) {
         String sql = "INSERT INTO usuario (nome, email, senha, perfil) VALUES (?, ?, ?, ?)";
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -16,13 +24,18 @@ public class UsuarioDao {
             stmt.setString(3, usuario.getSenha());
             stmt.setString(4, usuario.getPerfil().name());
             stmt.executeUpdate();
-            System.out.println("Usuário inserido com sucesso!");
+            System.out.println("Usuário cadastrado com sucesso!");
         } catch (SQLException e) {
-            System.out.println("Erro ao inserir usuário: " + e.getMessage());
+            System.out.println("Erro ao cadastrar usuário: " + e.getMessage());
         }
     }
 
-    public ArrayList<Usuario> listarUsuarios() {
+    /**
+     * Retorna todos os usuários cadastrados no banco.
+     *
+     * @return Lista de objetos Usuario.
+     */
+    public ArrayList<Usuario> buscarTodosUsuarios() {
         ArrayList<Usuario> lista = new ArrayList<>();
         String sql = "SELECT * FROM usuario";
 
@@ -40,12 +53,17 @@ public class UsuarioDao {
                 lista.add(usuario);
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao listar usuários: " + e.getMessage());
+            System.out.println("Erro ao buscar usuários: " + e.getMessage());
         }
         return lista;
     }
 
-    public void atualizarUsuario(Usuario usuario) {
+    /**
+     * Atualiza os dados de um usuário existente.
+     *
+     * @param usuario Objeto Usuario com os dados atualizados.
+     */
+    public void atualizarDadosUsuario(Usuario usuario) {
         String sql = "UPDATE usuario SET nome = ?, email = ?, senha = ?, perfil = ? WHERE id_usuario = ?";
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -58,17 +76,21 @@ public class UsuarioDao {
             if (linhasAfetadas > 0) {
                 System.out.println("Usuário atualizado com sucesso!");
             } else {
-                System.out.println("Usuário não encontrado para atualização.");
+                System.out.println("Nenhum usuário encontrado para atualização.");
             }
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar usuário: " + e.getMessage());
         }
     }
 
-    public void excluirUsuario(int id_usuario) {
-
-        if (EmprestimoDao.existeEmprestimoParaUsuario(id_usuario)) {
-            System.out.println("Não é possível deletar o usuário. Existem empréstimos vinculados a ele.");
+    /**
+     * Remove um usuário do banco de dados, desde que ele não tenha empréstimos vinculados.
+     *
+     * @param id_usuario ID do usuário a ser removido.
+     */
+    public void removerUsuario(int id_usuario) {
+        if (EmprestimoDao.verificarEmprestimoPorUsuario(id_usuario)) {
+            System.out.println("Não é possível remover o usuário. Existem empréstimos vinculados.");
             return;
         }
 
@@ -78,13 +100,12 @@ public class UsuarioDao {
             stmt.setInt(1, id_usuario);
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas > 0) {
-                System.out.println("Usuário excluído com sucesso!");
+                System.out.println("Usuário removido com sucesso!");
             } else {
-                System.out.println("Usuário não encontrado para exclusão.");
+                System.out.println("Nenhum usuário encontrado para remoção.");
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao excluir usuário: " + e.getMessage());
+            System.out.println("Erro ao remover usuário: " + e.getMessage());
         }
     }
-
 }

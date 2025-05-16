@@ -5,9 +5,17 @@ import modelo.EPI;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe responsável pelo acesso e manipulação dos dados da tabela 'epi' no banco de dados.
+ */
 public class EPIDao {
 
-    public void inserirEPI(EPI epi) {
+    /**
+     * Cadastra um novo EPI no banco de dados.
+     *
+     * @param epi Objeto EPI a ser cadastrado.
+     */
+    public void cadastrarEPI(EPI epi) {
         String sql = "INSERT INTO epi (nome, validade, quantidade) VALUES (?, ?, ?)";
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -15,13 +23,18 @@ public class EPIDao {
             stmt.setString(2, epi.getValidade());
             stmt.setInt(3, epi.getQuantidade());
             stmt.executeUpdate();
-            System.out.println("EPI inserido com sucesso!");
+            System.out.println("EPI cadastrado com sucesso!");
         } catch (SQLException e) {
-            System.out.println("Erro ao inserir EPI: " + e.getMessage());
+            System.out.println("Erro ao cadastrar EPI: " + e.getMessage());
         }
     }
 
-    public ArrayList<EPI> listarEPIs() {
+    /**
+     * Retorna uma lista com todos os EPIs cadastrados no banco.
+     *
+     * @return Lista de objetos EPI.
+     */
+    public ArrayList<EPI> buscarTodosEPIs() {
         ArrayList<EPI> lista = new ArrayList<>();
         String sql = "SELECT * FROM epi";
         try (Connection conn = Conexao.conectar();
@@ -37,12 +50,17 @@ public class EPIDao {
                 lista.add(epi);
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao listar EPIs: " + e.getMessage());
+            System.out.println("Erro ao buscar EPIs: " + e.getMessage());
         }
         return lista;
     }
 
-    public void atualizarEPI(EPI epi) {
+    /**
+     * Atualiza os dados de um EPI existente no banco de dados.
+     *
+     * @param epi Objeto EPI com os dados atualizados.
+     */
+    public void atualizarDadosEPI(EPI epi) {
         String sql = "UPDATE epi SET nome = ?, validade = ?, quantidade = ? WHERE id_epi = ?";
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -54,31 +72,36 @@ public class EPIDao {
             if (linhasAfetadas > 0) {
                 System.out.println("EPI atualizado com sucesso!");
             } else {
-                System.out.println("EPI não encontrado para atualização.");
+                System.out.println("Nenhum EPI encontrado para atualização.");
             }
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar EPI: " + e.getMessage());
         }
     }
 
-    public void excluirEPI(int id_epi) {
-        if (EmprestimoDao.existeEmprestimoParaEpi(id_epi)) {
-            System.out.println("Não é possível excluir a EPI. Existem empréstimos vinculados a ela.");
+    /**
+     * Remove um EPI do banco de dados, desde que não haja empréstimos vinculados a ele.
+     *
+     * @param id_epi ID do EPI a ser removido.
+     */
+    public void removerEPI(int id_epi) {
+        if (EmprestimoDao.verificarEmprestimoPorEpi(id_epi)) {
+            System.out.println("Não é possível remover o EPI. Existem empréstimos vinculados.");
             return;
         }
 
         String sql = "DELETE FROM epi WHERE id_epi = ?";
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, id_epi);
+            stmt.setInt(1, id_epi);
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas > 0) {
-                System.out.println("EPI excluído com sucesso!");
+                System.out.println("EPI removido com sucesso!");
             } else {
-                System.out.println("EPI não encontrado para exclusão.");
+                System.out.println("Nenhum EPI encontrado para remoção.");
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao excluir EPI: " + e.getMessage());
+            System.out.println("Erro ao remover EPI: " + e.getMessage());
         }
     }
 }

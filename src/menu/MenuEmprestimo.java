@@ -14,88 +14,89 @@ public class MenuEmprestimo {
         int opcao;
 
         do {
-            System.out.println("\n======== Menu Empréstimo =========");
-            System.out.println("1. Registrar Empréstimo");
-            System.out.println("2. Listar Empréstimos");
-            System.out.println("3. Atualizar Empréstimo");
-            System.out.println("4. Remover Empréstimo");
-            System.out.println("0. Voltar ao menu principal");
-            System.out.println("==================================");
-            System.out.print("Escolha: ");
+            System.out.println("\n========== GERENCIAMENTO DE EMPRÉSTIMOS ==========");
+            System.out.println("1 - Registrar novo empréstimo");
+            System.out.println("2 - Consultar empréstimos cadastrados");
+            System.out.println("3 - Atualizar informações de um empréstimo");
+
+            System.out.println("0 - Retornar ao menu principal");
+            System.out.println("===================================================");
+            System.out.print("Selecione uma opção: ");
+            while (!sc.hasNextInt()) {
+                System.out.print("Entrada inválida. Digite um número: ");
+                sc.next();
+            }
             opcao = sc.nextInt();
             sc.nextLine();
 
             switch (opcao) {
                 case 1 -> {
-                    System.out.print("ID do usuário: ");
+                    System.out.print("Informe o ID do usuário: ");
                     int id_usuario = sc.nextInt();
-                    System.out.print("ID do EPI: ");
+                    System.out.print("Informe o ID do EPI: ");
                     int id_epi = sc.nextInt();
                     sc.nextLine();
-                    System.out.print("Data retirada (aaaa-mm-dd hh:mm:ss): ");
+                    System.out.print("Data da retirada (aaaa-mm-dd hh:mm:ss): ");
                     String data_retirada = sc.nextLine();
-                    System.out.print("Data prevista devolução (aaaa-mm-dd hh:mm:ss): ");
-                    String data_prevista_retirada = sc.nextLine();
+                    System.out.print("Data prevista para devolução (aaaa-mm-dd hh:mm:ss): ");
+                    String data_prevista = sc.nextLine();
                     System.out.print("Confirmar retirada? (1 = Sim, 0 = Não): ");
-                    int confirmacao_retirada = sc.nextInt();
-                    Emprestimo novo = new Emprestimo(id_usuario, id_epi, data_retirada, data_prevista_retirada, confirmacao_retirada);
-                    dao.inserirEmprestimo(novo);
+                    int confirmacao = sc.nextInt();
 
+                    Emprestimo novo = new Emprestimo(id_usuario, id_epi, data_retirada, data_prevista, confirmacao);
+                    dao.cadastrarEmprestimo(novo);
                 }
+
                 case 2 -> {
-                    ArrayList<Emprestimo> lista = (ArrayList<Emprestimo>) dao.listarEmprestimos();
+                    ArrayList<Emprestimo> lista = (ArrayList<Emprestimo>) dao.buscarTodosEmprestimos();
                     if (lista.isEmpty()) {
                         System.out.println("Nenhum empréstimo cadastrado.");
                     } else {
-                        System.out.println("\nLista de Empréstimos:");
+                        System.out.println("\n>>> Empréstimos Cadastrados:");
                         for (Emprestimo e : lista) {
-                            System.out.println("ID: " + e.getId_emprestimo() + " | ID Usuário: " + e.getId_usuario() + " | ID EPI: " + e.getId_epi() + " | Retirada: " + e.getData_retirada() + " | Prevista Devolução: " + e.getData_prevista_devolucao() + " | Confirmação Retirada: " + e.getConfirmacao_retirada());
+                            System.out.printf("ID: %d | Usuário: %d | EPI: %d | Retirada: %s | Prevista Devolução: %s | Confirmado: %s%n",
+                                    e.getId_emprestimo(), e.getId_usuario(), e.getId_epi(), e.getData_retirada(), e.getData_prevista_devolucao(),
+                                    e.getConfirmacao_retirada() == 1 ? "Sim" : "Não");
                         }
                     }
                 }
+
                 case 3 -> {
-                    ArrayList<Emprestimo> lista = (ArrayList<Emprestimo>) dao.listarEmprestimos();
+                    ArrayList<Emprestimo> lista = (ArrayList<Emprestimo>) dao.buscarTodosEmprestimos();
                     if (lista.isEmpty()) {
                         System.out.println("Nenhum empréstimo registrado.");
                     } else {
-                        System.out.println("\nLista de Empréstimos:");
+                        System.out.println("\n>>> Empréstimos Cadastrados:");
                         for (Emprestimo e : lista) {
-                            System.out.println("ID: " + e.getId_emprestimo() + " | ID Usuário: " + e.getId_usuario() + " | ID EPI: " + e.getId_epi() + " | Retirada: " + e.getData_retirada() + " | Prevista Devolução: " + e.getData_prevista_devolucao() + " | Confirmação Retirada: " + e.getConfirmacao_retirada());
+                            System.out.printf("ID: %d | Usuário: %d | EPI: %d | Retirada: %s | Prevista Devolução: %s | Confirmado: %s%n",
+                                    e.getId_emprestimo(), e.getId_usuario(), e.getId_epi(), e.getData_retirada(), e.getData_prevista_devolucao(),
+                                    e.getConfirmacao_retirada() == 1 ? "Sim" : "Não");
                         }
-                        System.out.print("\nID do empréstimo a atualizar: ");
-                        int id_emprestimo = sc.nextInt();
+
+                        System.out.print("\nInforme o ID do empréstimo a ser atualizado: ");
+                        int id = sc.nextInt();
                         System.out.print("Novo ID do usuário: ");
                         int id_usuario = sc.nextInt();
                         System.out.print("Novo ID do EPI: ");
                         int id_epi = sc.nextInt();
                         sc.nextLine();
-                        System.out.print("Nova data retirada (aaaa-mm-dd hh:mm:ss): ");
+                        System.out.print("Nova data da retirada (aaaa-mm-dd hh:mm:ss): ");
                         String data_retirada = sc.nextLine();
-                        System.out.print("Nova data prevista devolução (aaaa-mm-dd hh:mm:ss): ");
-                        String data_prevista_retirada = sc.nextLine();
+                        System.out.print("Nova data prevista para devolução (aaaa-mm-dd hh:mm:ss): ");
+                        String data_prevista = sc.nextLine();
                         System.out.print("Confirmar retirada? (1 = Sim, 0 = Não): ");
-                        int confirmacao_retirada = sc.nextInt();
-                        Emprestimo atualizado = new Emprestimo(id_emprestimo, id_usuario, id_epi, data_retirada, data_prevista_retirada, confirmacao_retirada);
+                        int confirmacao = sc.nextInt();
+
+                        Emprestimo atualizado = new Emprestimo(id, id_usuario, id_epi, data_retirada, data_prevista, confirmacao);
                         dao.atualizarEmprestimo(atualizado);
                     }
                 }
-                case 4 -> {
-                    ArrayList<Emprestimo> lista = (ArrayList<Emprestimo>) dao.listarEmprestimos();
-                    if (lista.isEmpty()) {
-                        System.out.println("Nenhum empréstimo cadastrado.");
-                    } else {
-                        System.out.println("\nLista de Empréstimos:");
-                        for (Emprestimo e : lista) {
-                            System.out.println("ID: " + e.getId_emprestimo() + " | ID Usuário: " + e.getId_usuario() + " | ID EPI: " + e.getId_epi() + " | Retirada: " + e.getData_retirada() + " | Prevista Devolução: " + e.getData_prevista_devolucao() + " | Confirmação Retirada: " + e.getConfirmacao_retirada());
-                        }
-                        System.out.print("\nID do empréstimo a remover: ");
-                        int id = sc.nextInt();
-                        dao.excluirEmprestimo(id);
-                    }
-                }
-                case 0 -> System.out.println("Voltando...");
-                default -> System.out.println("Opção inválida.");
+
+
+                case 0 -> System.out.println("Retornando ao menu principal...");
+                default -> System.out.println("Opção inválida. Tente novamente.");
             }
+
         } while (opcao != 0);
     }
 }

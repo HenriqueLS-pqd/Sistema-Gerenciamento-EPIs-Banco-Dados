@@ -14,78 +14,65 @@ public class MenuDevolucao {
         int opcao;
 
         do {
-            System.out.println("\n========= Menu Devolução =========");
-            System.out.println("1. Registrar Devolução");
-            System.out.println("2. Listar Devoluções");
-            System.out.println("3. Atualizar Devolução");
-            System.out.println("4. Remover Devolução");
-            System.out.println("0. Voltar ao menu principal");
-            System.out.println("==================================");
-            System.out.print("Escolha: ");
+            System.out.println("\n========= GERENCIAMENTO DE DEVOLUÇÕES =========");
+            System.out.println("1 - Registrar nova devolução");
+            System.out.println("2 - Consultar devoluções registradas");
+            System.out.println("3 - Atualizar uma devolução");
+            System.out.println("0 - Retornar ao menu principal");
+            System.out.println("===============================================");
+            System.out.print("Selecione uma opção: ");
+            while (!sc.hasNextInt()) {
+                System.out.print("Entrada inválida. Digite um número: ");
+                sc.next();
+            }
             opcao = sc.nextInt();
             sc.nextLine();
 
             switch (opcao) {
                 case 1 -> {
-                    System.out.print("ID do empréstimo: ");
+                    System.out.print("Informe o ID do empréstimo: ");
                     int idEmprestimo = sc.nextInt();
                     sc.nextLine();
-                    System.out.print("Data da devolução (aaaa-mm-dd hh:mm:ss): ");
+                    System.out.print("Informe a data da devolução (aaaa-mm-dd hh:mm:ss): ");
                     String dataDevolucao = sc.nextLine();
                     Devolucao nova = new Devolucao(idEmprestimo, dataDevolucao);
-                    dao.inserirDevolucao(nova);
+                    dao.adicionarDevolucao(nova);
                 }
                 case 2 -> {
-                    ArrayList<Devolucao> lista = (ArrayList<Devolucao>) dao.listarDevolucoes();
+                    ArrayList<Devolucao> lista = (ArrayList<Devolucao>) dao.buscarTodasDevolucoes();
                     if (lista.isEmpty()) {
-                        System.out.println("Nenhuma devolução registrada.");
+                        System.out.println("Nenhuma devolução cadastrada.");
                     } else {
-                        System.out.println("\nLista de Devoluções:");
+                        System.out.println("\n>>> Devoluções Registradas:");
                         for (Devolucao d : lista) {
-                            System.out.println("ID: " + d.getId_devolucao() + " | ID Empréstimo: " + d.getId_emprestimo() + " | Data de Devolução: " + d.getData_devolucao());
+                            System.out.println("ID: " + d.getId_devolucao() + " | ID Empréstimo: " + d.getId_emprestimo() + " | Data: " + d.getData_devolucao());
                         }
                     }
                 }
                 case 3 -> {
-                    ArrayList<Devolucao> lista = (ArrayList<Devolucao>) dao.listarDevolucoes();
+                    ArrayList<Devolucao> lista = (ArrayList<Devolucao>) dao.buscarTodasDevolucoes();
                     if (lista.isEmpty()) {
-                        System.out.println("Nenhuma devolução registrada.");
+                        System.out.println("Nenhuma devolução cadastrada.");
                     } else {
-                        System.out.println("\nLista de Devoluções:");
+                        System.out.println("\n>>> Devoluções Registradas:");
                         for (Devolucao d : lista) {
-                            System.out.println("ID: " + d.getId_devolucao() + " | ID Empréstimo: " + d.getId_emprestimo() + " | Data de Devolução: " + d.getData_devolucao()
-                            );
+                            System.out.println("ID: " + d.getId_devolucao() + " | ID Empréstimo: " + d.getId_emprestimo() + " | Data: " + d.getData_devolucao());
                         }
-                        System.out.print("\nID da devolução a atualizar: ");
+                        System.out.print("\nInforme o ID da devolução a ser atualizada: ");
                         int idDevolucao = sc.nextInt();
                         System.out.print("Novo ID do empréstimo: ");
-                        int idEmprestimoNew = sc.nextInt();
+                        int idEmprestimoNovo = sc.nextInt();
                         sc.nextLine();
                         System.out.print("Nova data da devolução (aaaa-mm-dd hh:mm:ss): ");
-                        String dataDevolucaoNew = sc.nextLine();
-                        Devolucao atualizada = new Devolucao(idDevolucao, idEmprestimoNew, dataDevolucaoNew);
-                        dao.atualizarDevolucao(atualizada);
+                        String novaData = sc.nextLine();
+                        Devolucao atualizada = new Devolucao(idDevolucao, idEmprestimoNovo, novaData);
+                        dao.editarDevolucao(atualizada);
                     }
                 }
-                case 4 -> {
-                    ArrayList<Devolucao> lista = (ArrayList<Devolucao>) dao.listarDevolucoes();
-                    if (lista.isEmpty()) {
-                        System.out.println("Nenhuma devolução registrada.");
-                    } else {
-                        System.out.println("\nLista de Devoluções:");
-                        for (Devolucao d : lista) {
-                            System.out.println("ID: " + d.getId_devolucao() + " | ID Empréstimo: " + d.getId_emprestimo() + " | Data da Devolução: " + d.getData_devolucao()
-                            );
-                        }
-                        System.out.print("\nID da devolução a remover: ");
-                        int id = sc.nextInt();
-                        dao.excluirDevolucao(id);
-                    }
-                }
-                case 0 -> System.out.println("Voltando...");
-                default -> System.out.println("Opção inválida.");
+
+                case 0 -> System.out.println("Retornando ao menu principal...");
+                default -> System.out.println("Opção inválida. Tente novamente.");
             }
         } while (opcao != 0);
     }
 }
-

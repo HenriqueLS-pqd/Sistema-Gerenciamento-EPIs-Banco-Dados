@@ -9,28 +9,44 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe responsável por acessar e manipular os dados da tabela 'devolucao' no banco de dados.
+ */
 public class DevolucaoDao {
 
     private Connection conexao;
 
+    /**
+     * Construtor que estabelece a conexão com o banco de dados.
+     */
     public DevolucaoDao() {
         conexao = Conexao.conectar();
     }
 
-    public void inserirDevolucao(Devolucao devolucao) {
+    /**
+     * Adiciona uma nova devolução no banco de dados.
+     *
+     * @param devolucao Objeto Devolucao contendo os dados a serem inseridos.
+     */
+    public void adicionarDevolucao(Devolucao devolucao) {
         String sql = "INSERT INTO devolucao (id_emprestimo, data_devolucao) VALUES (?, ?)";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, devolucao.getId_emprestimo());
             stmt.setString(2, devolucao.getData_devolucao());
             stmt.executeUpdate();
-            System.out.println("Devolução inserido com sucesso!");
+            System.out.println("Devolução adicionada com sucesso!");
         } catch (SQLException e) {
-            System.out.println("Erro ao excluir Devolução: " + e.getMessage());
+            System.out.println("Erro ao adicionar devolução: " + e.getMessage());
         }
     }
 
-    public List<Devolucao> listarDevolucoes() {
+    /**
+     * Retorna uma lista com todas as devoluções cadastradas no banco de dados.
+     *
+     * @return Lista de objetos Devolucao.
+     */
+    public List<Devolucao> buscarTodasDevolucoes() {
         List<Devolucao> devolucoes = new ArrayList<>();
         String sql = "SELECT * FROM devolucao";
 
@@ -46,63 +62,32 @@ public class DevolucaoDao {
                 devolucoes.add(devolucao);
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao excluir Devolução: " + e.getMessage());
+            System.out.println("Erro ao buscar devoluções: " + e.getMessage());
         }
         return devolucoes;
     }
 
-    public void atualizarDevolucao(Devolucao devolucao) {
+    /**
+     * Atualiza os dados de uma devolução existente no banco de dados.
+     *
+     * @param devolucao Objeto Devolucao com os novos dados.
+     */
+    public void editarDevolucao(Devolucao devolucao) {
         String sql = "UPDATE devolucao SET id_emprestimo = ?, data_devolucao = ? WHERE id_devolucao = ?";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, devolucao.getId_emprestimo());
             stmt.setString(2, devolucao.getData_devolucao());
             stmt.setInt(3, devolucao.getId_devolucao());
-            stmt.executeUpdate();
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas > 0) {
-                System.out.println("Devolução atualizado com sucesso!");
+                System.out.println("Devolução atualizada com sucesso!");
             } else {
-                System.out.println("Devolução não encontrado para atualização.");
+                System.out.println("Nenhuma devolução encontrada para atualizar.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao atualizar devolução: " + e.getMessage());
         }
     }
 
-    public void excluirDevolucao(int id_devolucao) {
-        String sql = "DELETE FROM devolucao WHERE id_devolucao = ?";
-
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id_devolucao);
-            int linhasAfetadas = stmt.executeUpdate();
-            if (linhasAfetadas > 0) {
-                System.out.println("Devolução excluído com sucesso!");
-            } else {
-                System.out.println("Devolução não encontrado para exclusão.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao excluir Devolução: " + e.getMessage());
-        }
-    }
-
-    public static boolean existeDevolucaoParaEmprestimo(int id_emprestimo) {
-        String sql = "SELECT COUNT(*) FROM devolucao WHERE id_emprestimo = ?";
-
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, id_emprestimo);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao verificar se o empréstimo está vinculado a uma devolução: " + e.getMessage());
-        }
-
-        return false;
-    }
 }
