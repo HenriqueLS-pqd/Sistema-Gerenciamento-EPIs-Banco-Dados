@@ -35,7 +35,7 @@ public class MenuUsuario {
                     System.out.print("Nome completo: ");
                     String nome = sc.nextLine();
                     System.out.print("Email: ");
-                    String email = sc.nextLine();
+                    String email = sc.nextLine().toLowerCase();;
                     System.out.print("Senha: ");
                     String senha = sc.nextLine();
                     System.out.print("Perfil (administrador ou colaborador): ");

@@ -3,9 +3,10 @@ package menu;
 import dao.EPIDao;
 import modelo.EPI;
 
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import java.time.LocalDate;
 public class MenuEPI {
 
     public static void exibirMenuEpi() {
@@ -33,13 +34,27 @@ public class MenuEPI {
                 case 1 -> {
                     System.out.print("Informe o nome do EPI: ");
                     String nome = sc.nextLine();
-                    System.out.print("Informe a validade (aaaa-mm-dd): ");
-                    String validade = sc.nextLine();
+
+                    LocalDate validade = null;
+                    while (validade == null) {
+                        System.out.print("Informe a validade (aaaa-mm-dd): ");
+                        String validadeStr = sc.nextLine();
+
+                        try {
+                            validade = LocalDate.parse(validadeStr); // faz a validação
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Data inválida! Tente novamente no formato aaaa-mm-dd com valores reais.");
+                        }
+                    }
+
                     System.out.print("Informe a quantidade: ");
                     int quantidade = sc.nextInt();
-                    EPI novoEpi = new EPI(nome, validade, quantidade);
+                    sc.nextLine(); // consumir quebra de linha
+
+                    EPI novoEpi = new EPI(nome, validade.toString(), quantidade); // ou passe LocalDate se o construtor aceitar
                     dao.cadastrarEPI(novoEpi);
                 }
+
 
                 case 2 -> {
                     ArrayList<EPI> lista = dao.buscarTodosEPIs();
